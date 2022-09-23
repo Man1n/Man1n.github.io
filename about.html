@@ -3,6 +3,7 @@
     <title>About</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/a013bc0fb4.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 </head>
 <body>
     
@@ -11,111 +12,34 @@
         <a href="index.html" class="logo"><img src="Images/logo.png" class="logo"></a>
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="portfolio.html">Portfolio</a></li>
-            <li><a href="contact.html">Contact</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="skills.html">Skills</a></li>
+                    <li><a href="services.html">Services</a></li>                    
+                    <li><a href="gallery.html">Portfolio</a></li>
+                    <li><a href="contact.html">Contact</a></li>
         </ul>
     </nav>
 </div>
 
-    <div id="about">
-        
-        <div class="container">
-            <div class="row">
-                <div class="about-col-1">
-                    <img src="Images/image2.png">
-                    
-                </div>
-                <div class="about-col-2">
-                    <h1 class="sub-title"> About me</h1>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea 
-                        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore 
-                        eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
-                        deserunt mollit anim id est laborum.</p>
+<section class="about">
+    <div class="main">
+                <img src="images/Work12.jpeg" alt="">
+                <div class="about-text">
 
-                        <div class="tab-titles">
-                            <p class="tab-links active-link" onclick="opentab('skills')">Skills</p>
-                            <p class="tab-links" onclick="opentab('experience')">Experience</p>
-                            <p class="tab-links" onclick="opentab('education')">Education</p>
-                        </div>
-                        <div class="tab-contents active-tab" id="skills">
-                            <ul>
-                                <li><span>UI\UX</span><br>Designing Web\App interfaces</li>
-                                <li><span>Web Development</span><br>Designing Web\App interfaces</li>
-                                <li><span>App development</span><br>Designing Web\App interfaces</li>
-                            </ul>
-                        </div>
-                        <div class="tab-contents" id="experience">
-                            <ul>
-                                <li><span>2022-current</span><br>Designing Web\App interfaces</li>
-                                <li><span>2019-2021</span><br>Designing Web\App interfaces</li>
-                                <li><span>2017-2019</span><br>Designing Web\App interfaces</li>
-                            </ul>
-                        </div>
-                        <div class="tab-contents" id="education">
-                            <ul>
-                                <li><span>2018</span><br>PML teriary Education</li>
-                                <li><span>2017</span><br>Corsera online</li>
-                                <li><span>2016</span><br>Freelancer for front-end developer</li>
-                            </ul>
-                        </div>
-            </div>
-                
-            </div>
-        </div>
-    </div>
-    <script>
-        
-        var tablinks = document.getElementsByClassName("tab-links");
-        var tabcontents = document.getElementsByClassName("tab-contents");
-
-        function opentab(tabname){
-            for(tablink of tablinks){
-                tablink.classList.remove("active-link");
-            }
-            for(tabcontent of tabcontents){
-                tabcontent.classList.remove("active-tab");
-            }
-            event.currentTarget.classList.add("active-link");
-            document.getElementById(tabname).classList.add("active-tab");
-        }
-
-    </script> 
-    
-    
-
-      <div id="contact">
-        <div class="container">
-            <div class="row">
-                <div class="contact-left">
-                    <h1 class="sub-title">Contact Me</h1>
-                    <p><i class="fa-solid fa-paper-plane"></i>Jasongatws125@gmail.com</p>
-                    <p><i class="fa-solid fa-phone"></i>+230 58085182</p>
-                    <div class="social-icons">
-                        <a href="https://www.facebook.com/"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="https://www.instagram.com/"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="https://twitter.com/?lang=en"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="https://www.linkedin.com/"><i class="fa-brands fa-linkedin"></i></a>
-                    </div>
+                    <h1>About me</h1>
+                    <h5>Developer<span> & Designer</span></h5>
+                    <p>I am a front-end web developer. I can provide clean code and pixel 
+                       perfect design. I also make the wbsite more & more interactive with web animations.
+                       A responsive design makes tour website accessible to all users, regardless of their
+                       devices.</p>
+                       <a href="#" class="btn">Let's Talk</a>
 
                 </div>
-                <div class="contact-right">
-                    <form>
-                    <input type="text" name="Name" placeholder="Your Name" required>
-                    <input type="email" name="email" placeholder="Your Email" required>
-                    <textarea name="Message" rows="6" placeholder="Your Message"></textarea>
-                    <button type="submit" class="btn btn2">submit</button>
-                </form>
-                </div>
-            </div>
-        </div>
-    <div class="copyright">
-        <p>© 2022 J.Gates Software - Software Development Company. All rights reserved </p>
     </div>
-    </div>
+</section>
 </body>
-</html>
 
+          
+    
+
+      
