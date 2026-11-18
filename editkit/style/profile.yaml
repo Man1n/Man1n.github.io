@@ -1,0 +1,75 @@
+# House style for real-estate edits.
+# Everything the planner and the auto sound-design rules do reads from here.
+# Change a value, re-run `plan` / `auto-sfx`, and the edit follows.
+
+format:
+  width: 1080
+  height: 1920          # 9:16 vertical by default. Use 1920x1080 for YouTube/MLS.
+  fps: 30
+
+hook:                   # The opening. Fast, dynamic, scale punches and shakes.
+  length_beats: 8       # how long the hook runs before the music "takes the lead"
+  cut_every_beats: 1    # 1 = a cut on every beat, 0.5 = every half beat
+  scale_punch:          # quick zoom-in on each hook cut
+    from: 118           # % at the cut
+    to: 100             # % it settles to
+    frames: 6
+    ease: easeOut
+  alt_scale_out: true   # alternate punch-in / pull-out between cuts so it doesn't feel samey
+  shake_on_cuts: true
+  click_on_cuts: true
+  music_lowpass:        # music is muffled under the hook, opens at the drop
+    enabled: true
+    cutoff_hz: 550
+    open_beats: 1       # the filter sweep back open lasts this many beats before the drop
+  riser_into_drop: true
+
+body:                   # After the hook the music takes the lead.
+  cut_every_beats: 2
+  ramp_every_n_cuts: 3  # a speed-ramp transition on every Nth cut
+  sfx_gain_db: -6       # SFX sit back once the music leads
+  slow_scale_drift: 4   # % slow push-in on non-ramp shots, keeps static shots alive
+
+speed_ramp:             # The "proper" ramp: A speeds up into the cut, B lands fast and eases down.
+  peak_speed: 5.0
+  base_speed: 1.0
+  out_portion: 0.35     # last 35% of shot A accelerates
+  in_portion: 0.30      # first 30% of shot B decelerates
+  ease: smooth          # smooth = S-curve (bezier-like), linear
+  motion_blur: true     # blend sub-frames when fast; shutter in degrees below
+  shutter_deg: 270
+  whoosh: true          # a whoosh whose peak lands on the fastest frame (the cut)
+
+shake:
+  amplitude_px: 30      # peak offset at 1080 wide; scaled with resolution
+  duration: 0.28
+  frequency_hz: 18
+  rotation_deg: 0.6
+  decay: 2.5            # bigger = dies off faster
+
+impacts:
+  on_roles: [hero]      # an impact lands with every hero / meaningful shot
+  at: start             # start = on the reveal cut. end = right after the shot (on the next cut).
+  shake: true
+  sub_boom: true
+
+ambience:
+  on_roles: [lifestyle]
+  gain_db: -14
+  fade: 0.25
+
+clicks:
+  on_overlays: true     # a click as text / graphics pop in
+  gain_db: -8
+
+roles:                  # How clip filenames map to roles (first match wins).
+  hero: [hero, reveal, money, pool, view, twilight, aerial, drone]
+  lifestyle: [lifestyle, life, coffee, people, walk, kitchen_life, dinner, family]
+  detail: [detail, macro, close, tap, handle, texture]
+  establishing: [establish, exterior, front, street, facade]
+  interior: [interior, living, bedroom, bath, kitchen, room]
+
+mix:
+  music_gain_db: 0
+  target_lufs: -14
+  duck_music_under_impacts_db: -3

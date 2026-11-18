@@ -1,0 +1,49 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;background:transparent;overflow:hidden;width:100vw;height:100vh;font-family:Inter,'Helvetica Neue',Arial,sans-serif;color:var(--ink)}
+#wrap{position:absolute;left:calc(var(--u)*84);right:calc(var(--u)*84)}
+.eyebrow{display:flex;align-items:center;gap:calc(var(--u)*22);font-weight:600;letter-spacing:.42em;font-size:calc(var(--u)*26);color:var(--accent);text-transform:uppercase}
+.line{height:calc(var(--u)*3);background:var(--accent);width:0}
+.title{font-family:'Inter Display',Inter,sans-serif;font-weight:700;font-size:calc(var(--u)*104);line-height:1.02;letter-spacing:-.02em;margin-top:calc(var(--u)*18);text-shadow:0 calc(var(--u)*6) calc(var(--u)*40) rgba(0,0,0,.45)}
+.word{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.08em;margin-right:.24em}
+.ch{display:inline-block;will-change:transform}
+.sub{margin-top:calc(var(--u)*20);font-size:calc(var(--u)*34);font-weight:400;letter-spacing:.06em;opacity:.92;text-shadow:0 2px 20px rgba(0,0,0,.5)}
+</style>
+<script>window.DEFAULTS={eyebrow:'Just Listed',title:'1428 Ocean Drive',sub:'Malibu, California',y:0.70,align:'left'}</script>
+<script src="_lib.js"></script></head><body>
+<div id="wrap"><div class="eyebrow"><span id="eb"></span><div class="line" id="ln"></div></div>
+<div class="title" id="ti"></div><div class="sub" id="sb"></div></div>
+<script>
+const wrap = document.getElementById('wrap');
+wrap.style.top = (P.y * 100) + 'vh';
+if (P.align === 'center') { css(wrap, { textAlign: 'center' }); document.querySelector('.eyebrow').style.justifyContent = 'center'; }
+document.getElementById('eb').textContent = P.eyebrow;
+document.getElementById('sb').textContent = P.sub;
+const ti = document.getElementById('ti');
+const chars = [];
+P.title.split(' ').forEach(w => {
+  const ws = document.createElement('span'); ws.className = 'word';
+  [...w].forEach(c => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = c; ws.appendChild(s); chars.push(s); });
+  ti.appendChild(ws);
+});
+window.seek = t => {
+  const k = exitK(t);
+  const lift = (1 - k) * -60 * U;
+  wrap.style.transform = `translateY(${lift}px)`;
+  wrap.style.opacity = k;
+  const e = win(t, 0.0, 0.5);
+  document.getElementById('eb').style.opacity = e;
+  document.getElementById('eb').style.transform = `translateX(${(1 - e) * -30 * U}px)`;
+  document.getElementById('ln').style.width = (win(t, 0.15, 0.8, 'outExpo') * 160 * U) + 'px';
+  chars.forEach((c, i) => {
+    const p = win(t, 0.18 + i * 0.028, 0.6, 'outQuint');
+    c.style.transform = `translateY(${(1 - p) * 110}%) rotate(${(1 - p) * 8}deg)`;
+    c.style.filter = `blur(${(1 - p) * 10 * U}px)`;
+    c.style.opacity = Math.min(1, p * 1.6);
+  });
+  const s = win(t, 0.55 + chars.length * 0.02, 0.6);
+  const sb = document.getElementById('sb');
+  sb.style.opacity = s; sb.style.transform = `translateY(${(1 - s) * 24 * U}px)`;
+};
+window.seek(0);
+</script></body></html>

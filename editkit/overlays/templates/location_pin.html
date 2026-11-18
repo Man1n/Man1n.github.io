@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;background:transparent;overflow:hidden;width:100vw;height:100vh;font-family:Inter,'Helvetica Neue',Arial,sans-serif;color:var(--ink)}
+#pin{position:absolute;width:calc(var(--u)*110);height:calc(var(--u)*140);margin-left:calc(var(--u)*-55);margin-top:calc(var(--u)*-140)}
+#pin svg{width:100%;height:100%;filter:drop-shadow(0 calc(var(--u)*10) calc(var(--u)*16) rgba(0,0,0,.45))}
+.ring{position:absolute;border:calc(var(--u)*3) solid var(--accent);border-radius:50%;width:calc(var(--u)*40);height:calc(var(--u)*16);margin-left:calc(var(--u)*-20);margin-top:calc(var(--u)*-8)}
+#shadow{position:absolute;width:calc(var(--u)*60);height:calc(var(--u)*14);margin-left:calc(var(--u)*-30);margin-top:calc(var(--u)*-7);border-radius:50%;background:rgba(0,0,0,.45);filter:blur(calc(var(--u)*4))}
+#card{position:absolute;padding:calc(var(--u)*26) calc(var(--u)*34);border-radius:calc(var(--u)*24);background:rgba(12,12,14,.6);border:calc(var(--u)*1.5) solid rgba(255,255,255,.15);transform-origin:left center;min-width:calc(var(--u)*360)}
+.place{font-family:'Inter Display',Inter,sans-serif;font-weight:700;font-size:calc(var(--u)*46)}
+.li{display:flex;justify-content:space-between;gap:calc(var(--u)*30);font-size:calc(var(--u)*26);margin-top:calc(var(--u)*12);opacity:.9}
+.li b{color:var(--accent);font-weight:700}
+</style>
+<script>window.DEFAULTS={x:0.30,y:0.45,place:'Malibu, CA',lines:[['Zuma Beach','4 min'],['Downtown LA','35 min'],['LAX','45 min']]}</script>
+<script src="_lib.js"></script></head><body>
+<div id="shadow"></div><div class="ring" id="r1"></div><div class="ring" id="r2"></div><div class="ring" id="r3"></div>
+<div id="pin"><svg viewBox="0 0 110 140"><path d="M55 136C55 136 8 82 8 52a47 47 0 0 1 94 0c0 30-47 84-47 84z" style="fill:var(--accent)"/><circle cx="55" cy="52" r="18" fill="#141414"/></svg></div>
+<div id="card"><div class="place" id="pl"></div><div id="lines"></div></div>
+<script>
+const X = P.x * W, Y = P.y * H;
+const pin = document.getElementById('pin'), sh = document.getElementById('shadow'), card = document.getElementById('card');
+[pin, sh].forEach(e => css(e, { left: X + 'px', top: Y + 'px' }));
+const rings = ['r1', 'r2', 'r3'].map(id => { const r = document.getElementById(id); css(r, { left: X + 'px', top: Y + 'px' }); return r; });
+css(card, { left: (X + 90 * U) + 'px', top: (Y - 190 * U) + 'px' });
+document.getElementById('pl').textContent = P.place;
+const lines = P.lines.map(([a, b]) => { const d = document.createElement('div'); d.className = 'li'; d.innerHTML = `<span>${a}</span><b>${b}</b>`; document.getElementById('lines').appendChild(d); return d; });
+const bounce = t => { const n1 = 7.5625, d1 = 2.75; if (t < 1 / d1) return n1 * t * t; if (t < 2 / d1) return n1 * (t -= 1.5 / d1) * t + .75; if (t < 2.5 / d1) return n1 * (t -= 2.25 / d1) * t + .9375; return n1 * (t -= 2.625 / d1) * t + .984375; };
+window.seek = t => {
+  const k = exitK(t);
+  const d = bounce(clamp01(t / 0.7));
+  pin.style.transform = `translateY(${(1 - d) * -320 * U}px)`;
+  pin.style.opacity = clamp01(t / 0.1) * k;
+  sh.style.transform = `scale(${lerp(0.3, 1, d)})`; sh.style.opacity = d * k;
+  rings.forEach((r, i) => {
+    const ph = ((t - 0.55 - i * 0.4) % 1.2 + 1.2) % 1.2 / 1.2;
+    const on = t > 0.55 + i * 0.4 ? 1 : 0;
+    r.style.transform = `scale(${lerp(1, 6, E.outCubic(ph))})`;
+    r.style.opacity = on * (1 - ph) * 0.9 * k;
+  });
+  const c = win(t, 0.6, 0.55, 'outBack');
+  card.style.opacity = clamp01((t - 0.6) / 0.2) * k;
+  card.style.transform = `translateX(${(1 - c) * -40 * U}px) scale(${lerp(0.85, 1, c)})`;
+  lines.forEach((l, i) => { const p = win(t, 0.85 + i * 0.12, 0.45); l.style.opacity = p; l.style.transform = `translateY(${(1 - p) * 14 * U}px)`; });
+};
+window.seek(0);
+</script></body></html>

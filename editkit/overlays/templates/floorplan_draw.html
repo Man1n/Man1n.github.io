@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;background:transparent;overflow:hidden;width:100vw;height:100vh;font-family:Inter,'Helvetica Neue',Arial,sans-serif;color:var(--ink)}
+#panel{position:absolute;left:0;right:0;margin:0 auto;width:max-content;border-radius:calc(var(--u)*28);background:rgba(10,10,12,.62);border:calc(var(--u)*1.5) solid rgba(255,255,255,.14);padding:calc(var(--u)*36)}
+svg{display:block}
+.room{fill:none;stroke:var(--ink);stroke-width:3;stroke-linejoin:round}
+.lab{fill:var(--ink);font-size:20px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.dim{fill:var(--accent);font-size:16px;font-weight:600}
+.title{font-family:'Inter Display',Inter,sans-serif;font-weight:700;font-size:calc(var(--u)*40);margin-bottom:calc(var(--u)*18)}
+.title b{color:var(--accent)}
+</style>
+<script>window.DEFAULTS={y:0.30,title:'Main Level <b>· 2,640 sq ft</b>',rooms:[
+ {name:'Living',dim:"22' x 18'",r:[0,0,0.55,0.5]},{name:'Kitchen',dim:"16' x 14'",r:[0.55,0,0.45,0.38]},
+ {name:'Dining',dim:"14' x 12'",r:[0.55,0.38,0.45,0.27]},{name:'Primary',dim:"18' x 16'",r:[0,0.5,0.5,0.5]},
+ {name:'Bath',dim:"10' x 9'",r:[0.5,0.65,0.2,0.35]},{name:'Terrace',dim:"30' x 10'",r:[0.7,0.65,0.3,0.35]}]}</script>
+<script src="_lib.js"></script></head><body><div id="panel"><div class="title" id="tt"></div><svg id="s"></svg></div>
+<script>
+const panel = document.getElementById('panel'); panel.style.top = (P.y * 100) + 'vh';
+document.getElementById('tt').innerHTML = P.title;
+const PW = Math.min(W, H) * 0.78, PH = PW * 0.72;
+const svg = document.getElementById('s'); svg.setAttribute('width', PW); svg.setAttribute('height', PH);
+svg.setAttribute('viewBox', `0 0 ${PW} ${PH}`);
+const NS = 'http://www.w3.org/2000/svg';
+const rooms = P.rooms.map(rm => {
+  const [x, y, w, h] = rm.r;
+  const p = document.createElementNS(NS, 'rect');
+  const X = x * PW + 2, Y = y * PH + 2, Wd = w * PW - 4, Ht = h * PH - 4;
+  Object.entries({ x: X, y: Y, width: Wd, height: Ht, class: 'room' }).forEach(([k, v]) => p.setAttribute(k, v));
+  const len = 2 * (Wd + Ht);
+  p.setAttribute('stroke-dasharray', len);
+  const l = document.createElementNS(NS, 'text'); l.setAttribute('class', 'lab'); l.setAttribute('x', X + Wd / 2); l.setAttribute('y', Y + Ht / 2);
+  l.setAttribute('text-anchor', 'middle'); l.textContent = rm.name;
+  const d = document.createElementNS(NS, 'text'); d.setAttribute('class', 'dim'); d.setAttribute('x', X + Wd / 2); d.setAttribute('y', Y + Ht / 2 + 26);
+  d.setAttribute('text-anchor', 'middle'); d.textContent = rm.dim || '';
+  svg.append(p, l, d); return { p, l, d, len };
+});
+window.seek = t => {
+  const k = exitK(t);
+  const a = win(t, 0, 0.45);
+  panel.style.opacity = a * k;
+  panel.style.transform = `translateY(${(1 - a) * 40 * U + (1 - k) * -30 * U}px)`;
+  rooms.forEach((r, i) => {
+    const p = win(t, 0.2 + i * 0.12, 0.8, 'inOutCubic');
+    r.p.setAttribute('stroke-dashoffset', r.len * (1 - p));
+    const q = win(t, 0.6 + i * 0.12, 0.4);
+    r.l.style.opacity = q; r.d.style.opacity = q;
+  });
+};
+window.seek(0);
+</script></body></html>

@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:transparent;overflow:hidden;width:100vw;height:100vh}canvas{display:block}</style>
+<script>window.DEFAULTS={peak_at:0.5,intensity:0.7,palette:['#ffb35c','#ff6a3d','#ffd9a0','#ff9a8b'],seed:3,direction:1}</script>
+<script src="_lib.js"></script></head><body><canvas id="c"></canvas>
+<script>
+// Warm film-burn / light-leak for covering cuts. Place it so peak_at (fraction of its length) sits on the cut.
+const cv = document.getElementById('c'); cv.width = W; cv.height = H;
+const g = cv.getContext('2d');
+let s = P.seed * 9301 + 49297; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+const blobs = Array.from({ length: 6 }, (_, i) => ({
+  x0: rnd() * 0.6 - 0.2, y0: rnd(), vx: (0.5 + rnd() * 0.7) * P.direction, vy: (rnd() - 0.5) * 0.4,
+  r: 0.35 + rnd() * 0.55, c: P.palette[i % P.palette.length], ph: rnd() * 6.28,
+}));
+const hexA = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+window.seek = t => {
+  const u = t / DUR;
+  const pk = P.peak_at;
+  const env = u < pk ? E.inOutCubic(clamp01(u / pk)) : 1 - E.inOutCubic(clamp01((u - pk) / (1 - pk)));
+  g.clearRect(0, 0, W, H);
+  g.globalCompositeOperation = 'lighter';
+  const L = Math.max(W, H);
+  blobs.forEach(b => {
+    const x = (b.x0 + b.vx * u) * W, y = (b.y0 + b.vy * u + 0.05 * Math.sin(b.ph + u * 6)) * H;
+    const r = b.r * L * (0.8 + 0.3 * env);
+    const gr = g.createRadialGradient(x, y, 0, x, y, r);
+    const a = P.intensity * env;
+    gr.addColorStop(0, hexA(b.c, 0.55 * a)); gr.addColorStop(0.45, hexA(b.c, 0.22 * a)); gr.addColorStop(1, hexA(b.c, 0));
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+  });
+  // brief white-hot core right on the peak
+  const core = Math.max(0, 1 - Math.abs(u - pk) / 0.12) * P.intensity;
+  if (core > 0) { g.fillStyle = `rgba(255,244,225,${0.28 * core})`; g.fillRect(0, 0, W, H); }
+  g.globalCompositeOperation = 'source-over';
+};
+window.seek(0);
+</script></body></html>

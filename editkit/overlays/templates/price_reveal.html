@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;background:transparent;overflow:hidden;width:100vw;height:100vh;font-family:Inter,'Helvetica Neue',Arial,sans-serif;color:var(--ink)}
+#wrap{position:absolute;left:0;right:0;text-align:center}
+.label{font-size:calc(var(--u)*28);letter-spacing:.5em;font-weight:600;color:var(--accent);text-transform:uppercase;padding-left:.5em}
+.price{display:inline-flex;margin-top:calc(var(--u)*14);font-family:'Inter Display',Inter,sans-serif;font-weight:800;font-size:calc(var(--u)*150);line-height:1;letter-spacing:-.03em;filter:drop-shadow(0 calc(var(--u)*8) calc(var(--u)*30) rgba(0,0,0,.45))}
+.col{height:1em;overflow:hidden;display:inline-block}
+.strip{display:flex;flex-direction:column}
+.strip span{height:1em;display:block}
+.sep{display:inline-block}
+.bar{margin:calc(var(--u)*22) auto 0;height:calc(var(--u)*4);background:var(--accent);width:0}
+.note{margin-top:calc(var(--u)*18);font-size:calc(var(--u)*30);opacity:.9;letter-spacing:.08em}
+</style>
+<script>window.DEFAULTS={label:'Offered at',price:'$2,450,000',note:'',y:0.40}</script>
+<script src="_lib.js"></script></head><body>
+<div id="wrap"><div class="label" id="lb"></div><div class="price" id="pr"></div><div class="bar" id="bar"></div><div class="note" id="nt"></div></div>
+<script>
+const wrap = document.getElementById('wrap');
+wrap.style.top = (P.y * 100) + 'vh';
+document.getElementById('lb').textContent = P.label;
+document.getElementById('nt').textContent = P.note;
+const pr = document.getElementById('pr');
+const cols = [], seps = [];
+[...P.price].forEach(ch => {
+  if (/[0-9]/.test(ch)) {
+    const c = document.createElement('span'); c.className = 'col';
+    const s = document.createElement('span'); s.className = 'strip';
+    for (let r = 0; r < 30; r++) { const d = document.createElement('span'); d.textContent = r % 10; s.appendChild(d); }
+    c.appendChild(s); pr.appendChild(c); cols.push({ s, d: +ch });
+  } else { const s = document.createElement('span'); s.className = 'sep'; s.textContent = ch; pr.appendChild(s); seps.push(s); }
+});
+window.seek = t => {
+  const k = exitK(t);
+  wrap.style.opacity = k;
+  wrap.style.transform = `scale(${lerp(0.96, 1, k)})`;
+  const l = win(t, 0, 0.5);
+  document.getElementById('lb').style.opacity = l;
+  document.getElementById('lb').style.letterSpacing = lerp(0.9, 0.5, l) + 'em';
+  cols.forEach((c, i) => {
+    const p = win(t, 0.15 + i * 0.07, 1.1 + i * 0.05, 'outExpo');
+    const row = lerp(0, 20 + c.d, p);
+    c.s.style.transform = `translateY(${-row}em)`;
+    c.s.style.filter = `blur(${Math.min(6, Math.abs(1 - p) * 18) * U}px)`;
+  });
+  seps.forEach(s => s.style.opacity = win(t, 0.2, 0.4));
+  document.getElementById('bar').style.width = (win(t, 0.6, 0.9, 'outExpo') * 340 * U) + 'px';
+  const n = win(t, 1.0, 0.5); const nt = document.getElementById('nt');
+  nt.style.opacity = n; nt.style.transform = `translateY(${(1 - n) * 18 * U}px)`;
+};
+window.seek(0);
+</script></body></html>

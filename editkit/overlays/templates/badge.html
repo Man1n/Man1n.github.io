@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;background:transparent;overflow:hidden;width:100vw;height:100vh;font-family:Inter,'Helvetica Neue',Arial,sans-serif;color:var(--ink)}
+#b{position:absolute;left:0;right:0;margin:0 auto;width:max-content;padding:calc(var(--u)*26) calc(var(--u)*54);border:calc(var(--u)*5) solid var(--accent);border-radius:calc(var(--u)*18);font-family:'Inter Display',Inter,sans-serif;font-weight:900;font-size:calc(var(--u)*92);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;overflow:hidden;background:rgba(10,10,10,.35);text-shadow:0 4px 30px rgba(0,0,0,.5)}
+#b .t{color:var(--accent)}
+#shine{position:absolute;top:-20%;bottom:-20%;width:30%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.65),transparent)}
+</style>
+<script>window.DEFAULTS={text:'Just Listed',y:0.22,tilt:-6}</script>
+<script src="_lib.js"></script></head><body><div id="b"><span class="t" id="tx"></span><div id="shine"></div></div>
+<script>
+const b = document.getElementById('b');
+document.getElementById('tx').textContent = P.text;
+b.style.top = (P.y * 100) + 'vh';
+window.seek = t => {
+  const k = exitK(t, 0.35);
+  const p = win(t, 0, 0.42, 'outBack');
+  const sc = lerp(2.2, 1, p) * lerp(0.85, 1, k);
+  b.style.transform = `rotate(${lerp(P.tilt * 2.5, P.tilt, p)}deg) scale(${sc})`;
+  b.style.opacity = clamp01(t / 0.12) * k;
+  const sh = win(t, 0.5, 0.7, 'inOutCubic');
+  document.getElementById('shine').style.left = lerp(-40, 130, sh) + '%';
+};
+window.seek(0);
+</script></body></html>

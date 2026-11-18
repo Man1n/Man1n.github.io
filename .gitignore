@@ -1,0 +1,8 @@
+# EditKit working files (media is big: keep it out of git)
+projects/
+sfx/**/*.wav
+sfx/**/*.mp3
+sfx/**/*.aif*
+sfx/sfx_catalog.json
+__pycache__/
+*.pyc

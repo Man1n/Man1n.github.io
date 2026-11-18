@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;background:transparent;overflow:hidden;width:100vw;height:100vh;font-family:Inter,'Helvetica Neue',Arial,sans-serif;color:var(--ink)}
+#row{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:calc(var(--u)*26)}
+.card{width:calc(var(--u)*280);padding:calc(var(--u)*30) 0 calc(var(--u)*26);border-radius:calc(var(--u)*28);background:rgba(12,12,14,.52);border:calc(var(--u)*1.5) solid rgba(255,255,255,.14);text-align:center;box-shadow:0 calc(var(--u)*20) calc(var(--u)*60) rgba(0,0,0,.35)}
+.card svg{width:calc(var(--u)*64);height:calc(var(--u)*64);stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.num{font-family:'Inter Display',Inter,sans-serif;font-weight:800;font-size:calc(var(--u)*76);line-height:1.05;margin-top:calc(var(--u)*10)}
+.lab{font-size:calc(var(--u)*24);letter-spacing:.3em;text-transform:uppercase;opacity:.8;margin-top:calc(var(--u)*6)}
+</style>
+<script>window.DEFAULTS={y:0.62,items:[{icon:'bed',value:5,label:'Beds'},{icon:'bath',value:4.5,label:'Baths',decimals:1},{icon:'area',value:4820,label:'Sq Ft'}]}</script>
+<script src="_lib.js"></script></head><body><div id="row"></div>
+<script>
+const ICONS = {
+  bed: '<path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6"/><path d="M3 18h18M3 21v-3M21 21v-3"/><path d="M6 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3M12 10V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>',
+  bath: '<path d="M4 12h16v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M6 12V5a2 2 0 0 1 4 0"/><path d="M7 20l-1 2M17 20l1 2"/>',
+  area: '<path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/><rect x="8" y="8" width="8" height="8" rx="1"/>',
+  car: '<path d="M5 17h14v-4l-2-5H7l-2 5z"/><circle cx="8" cy="17" r="2"/><circle cx="16" cy="17" r="2"/>',
+  pool: '<path d="M2 18c2 0 2-1.5 4-1.5S8 18 10 18s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M8 15V5a2 2 0 0 1 4 0M16 15V5a2 2 0 0 0-4 0M8 9h8M8 13h8"/>',
+  acre: '<path d="M12 3v18M5 21c0-5 3-8 7-9 4 1 7 4 7 9"/><path d="M12 12c-3-1-5-4-5-7 3 0 5 2 5 4 0-2 2-4 5-4 0 3-2 6-5 7"/>',
+};
+const row = document.getElementById('row');
+row.style.top = (P.y * 100) + 'vh';
+const cards = P.items.map(it => {
+  const c = document.createElement('div'); c.className = 'card';
+  c.innerHTML = `<svg viewBox="0 0 24 24">${ICONS[it.icon] || ICONS.area}</svg><div class="num"></div><div class="lab">${it.label}</div>`;
+  row.appendChild(c); return { c, it, n: c.querySelector('.num') };
+});
+window.seek = t => {
+  const k = exitK(t);
+  cards.forEach((o, i) => {
+    const a = 0.1 + i * 0.14;
+    const p = win(t, a, 0.6, 'outBack');
+    const ex = 1 - k;
+    o.c.style.opacity = clamp01((t - a) / 0.2) * k;
+    o.c.style.transform = `translateY(${(1 - p) * 90 * U - ex * 40 * U}px) scale(${lerp(0.7, 1, p)})`;
+    const v = o.it.value * win(t, a + 0.1, 1.0, 'outExpo');
+    o.n.textContent = (o.it.prefix || '') + fmtNum(v, o.it.decimals || 0) + (o.it.suffix || '');
+  });
+};
+window.seek(0);
+</script></body></html>
